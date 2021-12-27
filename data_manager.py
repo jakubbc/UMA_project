@@ -39,8 +39,8 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
     :rtype df: pd.DataFrame
     """
     if 'alcohol' == dataset:
-        df1 = pd.read_csv('student-mat.csv')
-        df2 = pd.read_csv('student-por.csv')
+        df1 = pd.read_csv('data/student-mat.csv')
+        df2 = pd.read_csv('data/student-por.csv')
         df = pd.concat([df1, df2], ignore_index=True)  # ignore index because there are index duplicates
         columns = list(df.columns)
         # delete Walc and Dalc from the middle
@@ -49,9 +49,9 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
         columns.append('Walc')
         df = df[columns]
     elif 'ttt' == dataset:
-        df = pd.read_csv('ttt.csv')
+        df = pd.read_csv('data/ttt.csv')
     elif 'spect' == dataset:
-        df = pd.read_csv('spect_train.csv')
+        df = pd.read_csv('data/spect_train.csv')
 
     # since 'class_value' is used in the induced rules, rename such columns
     df = df.rename(columns={'class_value': 'class_value_1'})
@@ -64,7 +64,7 @@ def save_ttt_table() -> None:
         Don't directly read from file since it's sorted by class which affects rule induction (no negative kernel
         available)
     """
-    df = pd.read_csv('tic-tac-toe.data', header=None)
+    df = pd.read_csv('data/tic-tac-toe.data', header=None)
     # assign column names
     # df.columns = ['top-left', 'top-middle', 'top-right', 'middle-left', 'middle-middle', 'middle-right',
     #               'bottom-left', 'bottom-middle', 'bottom-right', 'x_win']
@@ -79,7 +79,7 @@ def save_spect_train_table() -> None:
         Don't directly read from file since it's sorted by class which affects rule induction (no negative kernel
         available)
     """
-    df = pd.read_csv(f'SPECT.train', header=None)
+    df = pd.read_csv(f'data/SPECT.train', header=None)
     # assign column names
     columns = [f'F{num}' for num in range(1, 23)]
     columns.insert(0, 'overall')
@@ -90,14 +90,14 @@ def save_spect_train_table() -> None:
     df = df[columns]
     # shuffle for better learning
     df = df.sample(frac=1).reset_index(drop=True)
-    df.to_csv(f'spect_train.csv', index=False)
+    df.to_csv(f'data/spect_train.csv', index=False)
 
 
 def load_spect_test_table() -> pd.DataFrame:
     """ returns the spect test data
         Test data can be sorted by class since it only affects rule induction
     """
-    df = pd.read_csv(f'SPECT.test', header=None)
+    df = pd.read_csv(f'data/SPECT.test', header=None)
     # assign column names
     columns = [f'F{num}' for num in range(1, 23)]
     columns.insert(0, 'overall')
