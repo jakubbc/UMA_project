@@ -19,7 +19,7 @@ from cross_validation import *
 dataset_ind = 1
 dataset_list = ['alcohol', 'ttt', 'spect']
 dataset = dataset_list[dataset_ind]
-rules_from_file = True
+rules_from_file = False
 # table before split used for training, after split for testing
 split = 900  # does not apply to spect data since train and test sets specified
 
@@ -65,13 +65,13 @@ if __name__ == "__main__":
     #cn2
 
     for element in dataset_list:
-        accuracy = cross_validation(rules_from_file, element, Algorithm.CN2)
+        accuracy = cross_validation_cn2(rules_from_file, element)
         print(element +" cn2 accuracy: ", accuracy)
 
     #aq
 
     for element in dataset_list:
-        accuracy = cross_validation(rules_from_file, element, Algorithm.AQ)
+        accuracy = cross_validation_aq(rules_from_file, element, num_best, quality_index_type)
         print(element + " aq accuracy: ", accuracy)
 
 

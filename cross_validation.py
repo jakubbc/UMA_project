@@ -10,40 +10,40 @@ from data_manager import *
 
 from enum import Enum
 
-num_best = 2
-quality_index_type = 0
-
-class Algorithm (Enum):
-    AQ = 1
-    CN2 = 2
 
 
-def cross_validation(rules_from_files, filename, algorithm):
+
+def cross_validation_cn2(rules_from_files, filename):
     path = 'data/'
 
     df = create_prepared_table(filename)
 
-    if algorithm == Algorithm.CN2:
-
-        if filename != 'spect':
-            accuracy1 = cn2_test(1, df, filename, rules_from_files)
-            accuracy2 = cn2_test(2, df, filename, rules_from_files)
-            accuracy3 = cn2_test(3, df, filename, rules_from_files)
-            overall_accuracy = (accuracy1 + accuracy2 + accuracy3)/3
-            overall_accuracy=overall_accuracy*100
-            os.remove(path + filename +'-train.csv')
-            os.remove(path + filename + '-test.csv')
-        else:
-            overall_accuracy = cn2_test(1, df, filename, rules_from_files)
+    if filename != 'spect':
+        accuracy1 = cn2_test(1, df, filename, rules_from_files)
+        accuracy2 = cn2_test(2, df, filename, rules_from_files)
+        accuracy3 = cn2_test(3, df, filename, rules_from_files)
+        overall_accuracy = (accuracy1 + accuracy2 + accuracy3)/3
+        overall_accuracy=overall_accuracy*100
+        os.remove(path + filename +'-train.csv')
+        os.remove(path + filename + '-test.csv')
     else:
+        overall_accuracy = cn2_test(1, df, filename, rules_from_files)
 
-        if filename != 'spect':
-            accuracy1 = aq_test(1, df, filename, rules_from_files)
-            accuracy2 = aq_test(2, df, filename, rules_from_files)
-            accuracy3 = aq_test(3, df, filename, rules_from_files)
-            overall_accuracy = (accuracy1 + accuracy2 + accuracy3)/3
-        else:
-            overall_accuracy = aq_test(1, df, filename, rules_from_files)
+    return overall_accuracy
+
+def cross_validation_aq(rules_from_files, filename, num_best, quality_index_type):
+
+    path = 'data/'
+
+    df = create_prepared_table(filename)
+
+    if filename != 'spect':
+        accuracy1 = aq_test(1, df, filename, rules_from_files, num_best, quality_index_type)
+        accuracy2 = aq_test(2, df, filename, rules_from_files, num_best, quality_index_type)
+        accuracy3 = aq_test(3, df, filename, rules_from_files, num_best, quality_index_type)
+        overall_accuracy = (accuracy1 + accuracy2 + accuracy3)/3
+    else:
+        overall_accuracy = aq_test(1, df, filename, rules_from_files, num_best, quality_index_type)
 
 
     return overall_accuracy
@@ -95,7 +95,7 @@ def cn2_test(data_set_number, data, filename, rules_from_file):
     return cn2_fit.accuracy
 
 
-def aq_test(data_set_number, data, filename, rules_from_file):
+def aq_test(data_set_number, data, filename, rules_from_file, num_best, quality_index_type):
     test_length = int(len(data) / 3)
 
     path = 'data/'
