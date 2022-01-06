@@ -19,7 +19,7 @@ from cross_validation import *
 dataset_ind = 1
 dataset_list = ['alcohol', 'ttt', 'spect']
 dataset = dataset_list[dataset_ind]
-rules_from_file = True
+rules_from_file = False
 # table before split used for training, after split for testing
 split = 900  # does not apply to spect data since train and test sets specified
 
