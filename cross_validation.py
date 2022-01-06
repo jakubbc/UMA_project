@@ -30,6 +30,7 @@ def cross_validation(rules_from_files, filename, algorithm):
             accuracy2 = cn2_test(2, df, filename, rules_from_files)
             accuracy3 = cn2_test(3, df, filename, rules_from_files)
             overall_accuracy = (accuracy1 + accuracy2 + accuracy3)/3
+            overall_accuracy=overall_accuracy*100
             os.remove(path + filename +'-train.csv')
             os.remove(path + filename + '-test.csv')
         else:
