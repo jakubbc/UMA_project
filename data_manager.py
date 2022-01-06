@@ -39,19 +39,24 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
     :rtype df: pd.DataFrame
     """
     if 'alcohol' == dataset:
-        df1 = pd.read_csv('data/student-mat.csv')
-        df2 = pd.read_csv('data/student-por.csv')
-        df = pd.concat([df1, df2], ignore_index=True)  # ignore index because there are index duplicates
+        df = pd.read_csv('data/student-mat.csv')
+        # df2 = pd.read_csv('data/student-por.csv')
+        # df = pd.concat([df1, df2], ignore_index=True)  # ignore index because there are index duplicates
         columns = list(df.columns)
         # delete Walc and Dalc from the middle
         del columns[26:28]
         # add column to predict
         columns.append('Walc')
         df = df[columns]
+        df = df.rename(columns={'Walc': 'class'})
+        df.to_csv('data/alcohol.csv', index=False)
     elif 'ttt' == dataset:
+        save_ttt_table()
         df = pd.read_csv('data/ttt.csv')
+        df = df.rename(columns={'x_win': 'class'})
+        df.to_csv('data/ttt.csv', index=False)
     elif 'spect' == dataset:
-        df = pd.read_csv('data/spect_train.csv')
+        df = pd.read_csv('data/spect-train.csv')
 
     # since 'class_value' is used in the induced rules, rename such columns
     df = df.rename(columns={'class_value': 'class_value_1'})
@@ -71,7 +76,8 @@ def save_ttt_table() -> None:
     df.columns = ['tl', 'tm', 'tr', 'ml', 'mm', 'mr', 'bl', 'bm', 'br', 'x_win']
     # shuffle for better learning
     df = df.sample(frac=1).reset_index(drop=True)
-    df.to_csv('ttt.csv', index=False)
+    df = df.rename(columns={'x_win': 'class'})
+    df.to_csv('data/ttt.csv', index=False)
 
 
 def save_spect_train_table() -> None:
@@ -90,7 +96,8 @@ def save_spect_train_table() -> None:
     df = df[columns]
     # shuffle for better learning
     df = df.sample(frac=1).reset_index(drop=True)
-    df.to_csv(f'data/spect_train.csv', index=False)
+    df = df.rename(columns={'overall': 'class'})
+    df.to_csv(f'data/spect-train.csv', index=False)
 
 
 def load_spect_test_table() -> pd.DataFrame:
@@ -106,5 +113,7 @@ def load_spect_test_table() -> pd.DataFrame:
     del columns[0]
     columns.append('overall')
     df = df[columns]
+    df = df.rename(columns={'overall': 'class'})
+    df.to_csv(f'data/spect-test.csv', index=False)
 
     return df
