@@ -27,7 +27,7 @@ class CN2algorithm():
         self.train_set = pd.read_csv(train_data_csv)
         self.test_set = pd.read_csv(test_data_csv)
         # self.train_set = pd.read_csv(data_csv)
-        self.min_significance = 0.9
+        self.min_significance = 0.5
         self.max_star_size = 3
         self.accuracy = 0
 
@@ -49,7 +49,7 @@ class CN2algorithm():
             existing_results = pd.DataFrame()
             # i=0
             # search rule space until rule best_new_rule_significance = 1significance is lower than user set boundary(0.5 for testing)
-            while best_new_rule_significance > 0.5:
+            while best_new_rule_significance > self.min_significance:
                 # print(i)
                 # i=i+1
                 # calls statement if its first iteration of loop

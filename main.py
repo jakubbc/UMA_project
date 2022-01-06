@@ -19,7 +19,7 @@ from cross_validation import *
 dataset_ind = 1
 dataset_list = ['alcohol', 'ttt', 'spect']
 dataset = dataset_list[dataset_ind]
-rules_from_file = False
+rules_from_file = True
 # table before split used for training, after split for testing
 split = 900  # does not apply to spect data since train and test sets specified
 
@@ -61,8 +61,17 @@ if __name__ == "__main__":
     # print(f'Accuracy: {np.round(np.sum(df_pred.iloc[:, -2] == df_pred.iloc[:, -1]) / df_pred.shape[0] * 100, 3)}%')
 
 
+
+    #cn2
+
     for element in dataset_list:
         accuracy = cross_validation(rules_from_file, element, Algorithm.CN2)
-        print(element +" accuracy: ", accuracy)
+        print(element +" cn2 accuracy: ", accuracy)
+
+    #aq
+
+    for element in dataset_list:
+        accuracy = cross_validation(rules_from_file, element, Algorithm.AQ)
+        print(element + " aq accuracy: ", accuracy)
 
 
