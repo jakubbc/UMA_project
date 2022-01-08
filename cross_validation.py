@@ -14,6 +14,11 @@ from enum import Enum
 
 
 def cross_validation_cn2(rules_from_files, filename):
+    '''
+    cross validation for CN2 algorithm for tic-tac-toe and student alcohol consumption dataset
+    and experiment for spect data set
+    return overall accuracy
+    '''
     path = 'data/'
 
     df = create_prepared_table(filename)
@@ -32,6 +37,11 @@ def cross_validation_cn2(rules_from_files, filename):
     return overall_accuracy
 
 def cross_validation_aq(rules_from_files, filename, num_best, quality_index_type):
+    '''
+    cross validation for AQ algorithm for tic-tac-toe and student alcohol consumption dataset
+    and experiment for spect data set
+    return overall accuracy
+    '''
 
     path = 'data/'
 
@@ -50,6 +60,10 @@ def cross_validation_aq(rules_from_files, filename, num_best, quality_index_type
 
 
 def cn2_test(data_set_number, data, filename, rules_from_file):
+    '''
+    test CN2 method for one train and test data set
+    return accuracy of alogrithm for test dataset
+    '''
     test_length = int(len(data) / 3)
 
     path = 'data/'
@@ -96,6 +110,10 @@ def cn2_test(data_set_number, data, filename, rules_from_file):
 
 
 def aq_test(data_set_number, data, filename, rules_from_file, num_best, quality_index_type):
+    '''
+    test AQ method for one train and test data set
+    return accuracy of alogrithm for test dataset
+    '''
     test_length = int(len(data) / 3)
 
     path = 'data/'
