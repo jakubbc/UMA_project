@@ -33,6 +33,7 @@ def cross_validation_cn2(rules_from_files, filename):
         os.remove(path + filename + '-test.csv')
     else:
         overall_accuracy = cn2_test(1, df, filename, rules_from_files)
+        overall_accuracy=overall_accuracy*100
 
     return overall_accuracy
 
