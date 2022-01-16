@@ -309,7 +309,7 @@ def predict_record(rules: list, row: pd.Series):
     return np.NaN
 
 
-def predict_table(rules: list, df: pd.DataFrame, col_name: str = 'predicted') -> pd.DataFrame:
+def predict_table(possible_values, rules: list, df: pd.DataFrame, col_name: str = 'predicted') -> pd.DataFrame:
     """ Predict values for a data set using a set of rules
 
     :param rules: rules induced with aq algorithm for classification
@@ -325,11 +325,21 @@ def predict_table(rules: list, df: pd.DataFrame, col_name: str = 'predicted') ->
     :rtype df_predict: pd.DataFrame
     """
     # create a copy of df and create new empty column with the target name
+    df1 = pd.DataFrame(0, index=possible_values,
+                       columns=possible_values)
     df = df.copy()
     df[col_name] = np.nan
     # use rules to predict each record
     for i in range(df.shape[0]):
         df.iloc[i, -1] = predict_record(rules, df.iloc[i])
+        if isinstance(df.iloc[i, -1], float):
+            string_pred=str(int(df.iloc[i, -1]))
+            str_actual=str(int(df.iloc[i, -2]))
+        else:
+            string_pred = str(df.iloc[i, -1])
+            str_actual = str(df.iloc[i, -2])
+        df1.loc[string_pred, str_actual] = df1.loc[string_pred, str_actual] + 1
+    print(df1)
 
     df_predict = df
     return df_predict
