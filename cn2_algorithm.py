@@ -78,7 +78,7 @@ class CN2algorithm():
 
         return rule_list
 
-    def test_fitted_model(self, rule_list, data_set='default'):
+    def test_fitted_model(self, possible_values, rule_list, data_set='default'):
         """
         Test rule list returned by fit_CN2 function on test data(or manually supplied data)
         returns a dataframe that contains the rule, rule acc, num of examples covered.
@@ -89,10 +89,14 @@ class CN2algorithm():
 
         remaining_examples = data_set
         list_of_row_dicts = []
+        all_correct=0
+        all=len(data_set)
 
+
+        all_in_data = 0
         for rule in rule_list:
             rule_coverage_indexes, rule_coverage_dataframe = self.complex_coverage(rule[0], remaining_examples)
-            # check for zero coverage due to noise(lense data too small)
+
             if len(rule_coverage_dataframe) == 0:
                 row_dictionary = {'rule': rule, 'pred_class': 'zero coverage', 'rule_acc': 0,
                                   'num_examples': 0, 'num_correct': 0,
@@ -100,28 +104,55 @@ class CN2algorithm():
                 list_of_row_dicts.append(row_dictionary)
             # otherwise generate statistics about rule then save and remove examples from the data and test next rule.
             else:
+
                 class_of_covered_examples = rule_coverage_dataframe['class']
-                # import ipdb;ipdb.set_trace(context=8)
+
                 class_counts = class_of_covered_examples.value_counts()
                 rule_accuracy = class_counts.values[0] / sum(class_counts)
                 num_correctly_classified_examples = class_counts.values[0]
+                all_correct=all_correct+num_correctly_classified_examples
+
+
+
+
                 num_incorrectly_classified_examples = sum(class_counts.values) - num_correctly_classified_examples
+                # print("corr", num_correctly_classified_examples)
+                # print(num_incorrectly_classified_examples)
 
                 row_dictionary = {'rule': rule, 'pred_class': rule[1], 'rule_acc': rule_accuracy,
                                   'num_examples': len(rule_coverage_indexes),
                                   'num_correct': num_correctly_classified_examples,
                                   'num_wrong': num_incorrectly_classified_examples}
                 list_of_row_dicts.append(row_dictionary)
+                # print(remaining_examples.values[rule_coverage_indexes])
 
                 remaining_examples = remaining_examples.drop(rule_coverage_indexes)
+                data_after = self.count_class_in_dataset(remaining_examples, possible_values)
+
+
+
 
         results = pd.DataFrame(list_of_row_dicts)
         if (len([r for r in results['rule_acc'] if r != 0])==0):
             overall_accuracy=0
         else:
             overall_accuracy = sum(results['rule_acc']) / len([r for r in results['rule_acc'] if r != 0])
-        self.accuracy=overall_accuracy
+        # print("all", all)
+        # print("all_correct", all_correct)
+        print("accuracy2", all_correct*100/all)
+        overall_accuracy=all_correct*100/all
+        self.accuracy = overall_accuracy
+        print(overall_accuracy)
+
         return results, overall_accuracy
+
+    def count_class_in_dataset(self, data_set, possible_values):
+        result = pd.DataFrame(0, index=[1], columns=possible_values)
+        for i in range(len(data_set)):
+
+            result[str(data_set.iloc[i,-1])]=result[str(data_set.iloc[i,-1])]+1
+
+        return result
 
     def apply_and_order_rules_by_score(self, complexes, data_set='default'):
         """
@@ -280,15 +311,10 @@ class CN2algorithm():
             return [], []
 
         mask = data_set.isin(rule).all(axis=1)
+
         rule_coverage_indexes = data_set[mask].index.values
         rule_coverage_dataframe = data_set[mask]
 
-        # #iterate over dataframe rows
-        # for index,row in data_set.iterrows():
-        # 	if self.check_rule_datapoint(row, complex):
-        # 		coverage.append(index)
-
-        # import ipdb;ipdb.set_trace(context=8)
         return rule_coverage_indexes, rule_coverage_dataframe
 
     def check_rule_datapoint(self, datapoint, complex):
@@ -300,6 +326,7 @@ class CN2algorithm():
         the form ('Attribute', 'Value').
         """
         if type(complex) == tuple:
+            print(complex[1])
             if datapoint[complex[0]] == complex[1]:
                 return True
             else:
@@ -366,3 +393,26 @@ class CN2algorithm():
         # laplace_accuracy = (num_pred_class+1)/(num_instances+num_classes)
         laplace_accuracy_2 = (num_instances + num_classes - num_pred_class - 1) / (num_instances + num_classes)
         return laplace_accuracy_2
+
+    def check_for_all(self, rules, possible_values):
+        df1 = pd.DataFrame(0, index=possible_values,
+                           columns=possible_values)
+        data=self.test_set.copy()
+        for i in range(len(data)):
+
+            row = data.loc[i, :]
+            str_actual=str(data.loc[i, 'class'])
+            string_pred=self.check(row, rules)
+            if string_pred is None:
+                string_pred = possible_values[0]
+            df1.loc[string_pred, str_actual] = df1.loc[string_pred, str_actual] + 1
+        print(df1)
+
+
+    def check(self, row, rules):
+        for rule in rules:
+            result = self.check_rule_datapoint(row, rule[0])
+            if result == True:
+                return str(rule[1])
+
+
