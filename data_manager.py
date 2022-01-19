@@ -48,6 +48,7 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
         # add column to predict
         columns.append('Walc')
         df = df[columns]
+        df = df.sample(frac=1).reset_index(drop=True)
         df = df.rename(columns={'Walc': 'class'})
         df.to_csv('data/alcohol.csv', index=False)
     elif 'ttt' == dataset:
@@ -60,6 +61,7 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
 
     # since 'class_value' is used in the induced rules, rename such columns
     df = df.rename(columns={'class_value': 'class_value_1'})
+    df = df.sample(frac=1).reset_index(drop=True)
 
     return df
 

@@ -17,14 +17,15 @@ from cross_validation import *
 # program parameters
 # pick one of three datasets
 dataset_ind = 1
-dataset_list = ['alcohol', 'ttt', 'spect']
+dataset_list = ['alcohol','ttt', 'spect']
 dataset = dataset_list[dataset_ind]
-rules_from_file = True
+rules_from_file = False
 # table before split used for training, after split for testing
 split = 900  # does not apply to spect data since train and test sets specified
 
 # params for aq algorithm:
 num_best = 2
+max_k = 3
 quality_index_type = 0
 
 if __name__ == "__main__":
@@ -35,16 +36,28 @@ if __name__ == "__main__":
     # print(f'test covers(): {test_covers()}')
     # print(f'test delete_non_general(): {test_delete_non_general()}')
 
+
+    #time measure
+
+    # for element in dataset_list:
+    #     time = count_times_cn2(element)
+    #     print(element + "  cn2 time: ")
+    #     print(time)
+    #
+    #     time = count_times_aq(element, num_best, quality_index_type)
+    #     print(element + "  aq time: ")
+    #     print(time)
+
     # cn2
 
     for element in dataset_list:
-        accuracy = cross_validation_cn2(rules_from_file, element)
+        accuracy = cross_validation_cn2(rules_from_file, element, max_k)
         print(element +" cn2 accuracy: ", accuracy)
 
     # #aq
 
     for element in dataset_list:
-        accuracy = cross_validation_aq(rules_from_file, element, num_best, quality_index_type)
+        accuracy = cross_validation_aq(rules_from_file, element, num_best, quality_index_type, max_k)
         print(element + " aq accuracy: ", accuracy)
 
 
