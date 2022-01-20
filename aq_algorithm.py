@@ -205,7 +205,7 @@ def aq_specialization(df: pd.DataFrame, num_best: int, quality_index_type: int) 
     # counter to make sure algorithm not stuck
     count = 0
     while not df_neg.empty:
-        print(f'aq: {count}')
+        # print(f'iteration aq: {count}')
         count += 1
         # choose negative kernel
         kernel_neg = df_neg.index[0]
@@ -277,7 +277,7 @@ def induce_rules(df: pd.DataFrame, num_best: int, quality_index_type: int = 0) -
 
     while not df.empty:
         # print number of remaining rows to see have many rows covered by each rule
-        print(f'induce: {count}, remaining df rows: {df.shape[0]}')
+        print(f'rule induction iteration: {count}, df rows not covered: {df.shape[0]}')
         count += 1
         # create and append new rule
         new_rule = aq_specialization(df, num_best, quality_index_type)
@@ -309,7 +309,9 @@ def predict_record(rules: list, row: pd.Series):
     return np.NaN
 
 
-def predict_table(possible_values, rules: list, df: pd.DataFrame, col_name: str = 'predicted') -> pd.DataFrame:
+# for confusion matrix
+# def predict_table(possible_values, rules: list, df: pd.DataFrame, col_name: str = 'predicted') -> pd.DataFrame:
+def predict_table(rules: list, df: pd.DataFrame, col_name: str = 'predicted') -> pd.DataFrame:
     """ Predict values for a data set using a set of rules
 
     :param rules: rules induced with aq algorithm for classification
@@ -324,22 +326,22 @@ def predict_table(possible_values, rules: list, df: pd.DataFrame, col_name: str 
     :return df_predict: df with added column of predictions
     :rtype df_predict: pd.DataFrame
     """
+    # for confusion matrix
+    # df1 = pd.DataFrame(0, index=possible_values, columns=possible_values)
     # create a copy of df and create new empty column with the target name
-    df1 = pd.DataFrame(0, index=possible_values,
-                       columns=possible_values)
     df = df.copy()
     df[col_name] = np.nan
     # use rules to predict each record
     for i in range(df.shape[0]):
         df.iloc[i, -1] = predict_record(rules, df.iloc[i])
         if isinstance(df.iloc[i, -1], float):
-            string_pred=str(int(df.iloc[i, -1]))
-            str_actual=str(int(df.iloc[i, -2]))
+            string_pred = str(int(df.iloc[i, -1]))
+            str_actual = str(int(df.iloc[i, -2]))
         else:
             string_pred = str(df.iloc[i, -1])
             str_actual = str(df.iloc[i, -2])
-        df1.loc[string_pred, str_actual] = df1.loc[string_pred, str_actual] + 1
-    print(df1)
+        # df1.loc[string_pred, str_actual] += 1
+    # print(df1)
 
     df_predict = df
     return df_predict

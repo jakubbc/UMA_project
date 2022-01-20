@@ -61,6 +61,7 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
 
     # since 'class_value' is used in the induced rules, rename such columns
     df = df.rename(columns={'class_value': 'class_value_1'})
+    # shuffle rows
     df = df.sample(frac=1).reset_index(drop=True)
 
     return df

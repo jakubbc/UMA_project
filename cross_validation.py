@@ -13,14 +13,12 @@ from enum import Enum
 from timeit import default_timer as timer
 
 
-
-
 def cross_validation_cn2(rules_from_files, filename, max_k):
-    '''
+    """
     cross validation for CN2 algorithm for tic-tac-toe and student alcohol consumption dataset
     and experiment for spect data set
     return overall accuracy
-    '''
+    """
     path = 'data/'
 
     df = create_prepared_table(filename)
@@ -30,19 +28,20 @@ def cross_validation_cn2(rules_from_files, filename, max_k):
             accuracy = cn2_test( df, filename, rules_from_files, i+1, max_k)
             overall_accuracy = overall_accuracy+accuracy
         overall_accuracy = overall_accuracy/max_k
-        os.remove(path + filename +'-train.csv')
+        os.remove(path + filename + '-train.csv')
         os.remove(path + filename + '-test.csv')
     else:
         overall_accuracy = cn2_test( df, filename, rules_from_files, 1, 1)
 
     return overall_accuracy
 
+
 def cross_validation_aq(rules_from_files, filename, num_best, quality_index_type, max_k):
-    '''
+    """
     cross validation for AQ algorithm for tic-tac-toe and student alcohol consumption dataset
     and experiment for spect data set
     return overall accuracy
-    '''
+    """
 
     path = 'data/'
 
@@ -51,13 +50,12 @@ def cross_validation_aq(rules_from_files, filename, num_best, quality_index_type
 
     if filename != 'spect':
         for i in range(0, max_k):
-            accuracy = aq_test( df, filename, rules_from_files, num_best, quality_index_type, i+1, max_k)
+            accuracy = aq_test(df, filename, rules_from_files, num_best, quality_index_type, i+1, max_k)
             print(accuracy)
             overall_accuracy = overall_accuracy + accuracy
         overall_accuracy = overall_accuracy / max_k
     else:
-        overall_accuracy = aq_test( df, filename, rules_from_files, num_best, quality_index_type, 1, 1)
-
+        overall_accuracy = aq_test(df, filename, rules_from_files, num_best, quality_index_type, 1, 1)
 
     return overall_accuracy
 
@@ -115,10 +113,10 @@ def cn2_test(data, filename, rules_from_file, current_k, max_k):
 
 
 def aq_test(data, filename, rules_from_file, num_best, quality_index_type, current_k, max_k):
-    '''
+    """
     test AQ method for one train and test data set
-    return accuracy of alogrithm for test dataset
-    '''
+    return accuracy of algorithm for test dataset
+    """
     test_length = int(len(data) / 3)
 
     path = 'data/'
