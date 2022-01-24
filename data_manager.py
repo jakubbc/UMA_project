@@ -52,7 +52,7 @@ def create_prepared_table(dataset: str) -> pd.DataFrame:
         df = df.rename(columns={'Walc': 'class'})
         df.to_csv('data/alcohol.csv', index=False)
     elif 'ttt' == dataset:
-        save_ttt_table()
+        # save_ttt_table()
         df = pd.read_csv('data/ttt.csv')
         df = df.rename(columns={'x_win': 'class'})
         df.to_csv('data/ttt.csv', index=False)

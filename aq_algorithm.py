@@ -277,7 +277,8 @@ def induce_rules(df: pd.DataFrame, num_best: int, quality_index_type: int = 0) -
 
     while not df.empty:
         # print number of remaining rows to see have many rows covered by each rule
-        print(f'rule induction iteration: {count}, df rows not covered: {df.shape[0]}')
+        if count % 5 == 0:
+            print(f'rule induction iteration: {count}, df rows not covered: {df.shape[0]}')
         count += 1
         # create and append new rule
         new_rule = aq_specialization(df, num_best, quality_index_type)
@@ -286,6 +287,63 @@ def induce_rules(df: pd.DataFrame, num_best: int, quality_index_type: int = 0) -
         df = delete_covered(new_rule, df)
 
     return rules
+
+
+def use_aq_simple(fname: str, target_col_num: int, headers: bool, split: float, num_best: int,
+                  quality_index_type: int) -> None:
+    """ generate a set of rules using the aq algorithm based on data from a specified file and tests its accuracy
+
+    :param fname: name of the file containing the data
+    :type fname: str
+
+    :param target_col_num: number of target column, starting from 0
+    :type target_col_num: int
+
+    :param headers: decides whether file under fname contains column names (True) or not (False)
+    :type headers: bool
+
+    :param split: decides what fraction of dataset used for training, the rest used for testing
+    :type split: float
+
+    :param num_best: number of complexes to keep in each iteration of the aq algorithm
+    :type num_best: int
+
+    :param quality_index_type: determines what kind of quality measurement to use in aq algorithm. 0 - covering,
+                                1 - accuracy. Formulas according to project documentation
+    :type quality_index_type: int
+
+    :return rules: set of rules based on df
+    :rtype rules: list of dict
+    """
+    # read df from file
+    if headers:
+        df = pd.read_csv(fname, header=0)
+    else:
+        df = pd.read_csv(fname, header=None)
+
+    # move target column to last column
+    columns = list(df.columns)
+    try:
+        target_col = columns[target_col_num]
+    except IndexError:
+        raise Exception('Requested target column index higher than total column number')
+    del columns[target_col_num]
+    columns.append(target_col)
+    df = df[columns]
+
+    # shuffle for better training
+    df = df.sample(frac=1).reset_index(drop=True)
+
+    print(df)
+
+    # induce rules using the aq algorithm
+    rules = induce_rules(df.loc[:int(df.shape[0] * split)], num_best, quality_index_type)
+
+    df_pred = predict_table(rules, df.loc[int(df.shape[0] * split):], 'pred')
+    print(df_pred)
+    print(f'Accuracy: {np.round(np.sum(df_pred.iloc[:, -2] == df_pred.iloc[:, -1]) / df_pred.shape[0] * 100, 3)}%')
+
+    return
 
 
 def predict_record(rules: list, row: pd.Series):

@@ -50,8 +50,9 @@ def cross_validation_aq(rules_from_files, filename, num_best, quality_index_type
 
     if filename != 'spect':
         for i in range(0, max_k):
+            print(f'{i+1}/{max_k}')
             accuracy = aq_test(df, filename, rules_from_files, num_best, quality_index_type, i+1, max_k)
-            print(accuracy)
+            # print(accuracy)
             overall_accuracy = overall_accuracy + accuracy
         overall_accuracy = overall_accuracy / max_k
     else:
@@ -117,7 +118,7 @@ def aq_test(data, filename, rules_from_file, num_best, quality_index_type, curre
     test AQ method for one train and test data set
     return accuracy of algorithm for test dataset
     """
-    test_length = int(len(data) / 3)
+    test_length = int(len(data) / max_k)
 
     path = 'data/'
 
